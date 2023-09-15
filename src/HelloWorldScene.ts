@@ -1,4 +1,5 @@
 import Phaser from 'phaser'
+import { Tile } from './tile'
 const TILE_WIDTH = 79 // Width of tile image
 const TILE_HEIGHT = 92 // Height of tile image
 const TILE_ORIGIN = 0.25 // Center of tile top
@@ -41,14 +42,38 @@ export default class HelloWorldScene extends Phaser.Scene {
                 cam.zoom = cam.zoom - deltaY * 0.0003
             }
         )
-        for (let x = 0; x < MAP_SIZE_X; x++) {
+        /*  for (let x = 0; x < MAP_SIZE_X; x++) {
             for (let y = 0; y < MAP_SIZE_Y; y++) {
                 for (let z = 0; z < MAP_SIZE_Z; z++) {
                     this.createIsometricTile(x, y, z)
                 }
             }
         }
-        this.createIsometricTile(1, 2, 2)
+        this.createIsometricTile(1, 2, 2) */
+        for (let x = 0; x < 10; x++) {
+            for (let y = 0; y < 10; y++) {
+                for (let z = 0; z < 2; z++) {
+                    const tile = new Tile({
+                        scene: this.scene.scene,
+                        isoX: x,
+                        isoY: y,
+                        isoZ: z,
+                    })
+                    tile.image.setInteractive()
+                    tile.image.on('pointerdown', (a, b, c) => {
+                        tile.z += 0.1
+                        tile.image.setTint(0xbf96da)
+                        this.tweens.add({
+                            targets: tile,
+                            x: 20,
+                            y: 20,
+                            duration: 2000,
+                            ease: 'Power2',
+                        })
+                    })
+                }
+            }
+        }
     }
     update(time: number, delta: number): void {}
 
