@@ -1,17 +1,6 @@
 import Phaser from 'phaser'
 import { Tile } from './tile'
-const TILE_WIDTH = 79 // Width of tile image
-const TILE_HEIGHT = 92 // Height of tile image
-const TILE_ORIGIN = 0.25 // Center of tile top
-
-const MAP_SIZE_X = 10
-const MAP_SIZE_Y = 20
-const MAP_SIZE_Z = 1
-
-const getTileDepth = (x, y, z) => x + y + z * 1.25
-const getTileY = (x, y, z) =>
-    (x + y) * (TILE_HEIGHT * TILE_ORIGIN) - z * (TILE_HEIGHT * 0.5)
-
+let r = 0
 export default class HelloWorldScene extends Phaser.Scene {
     constructor() {
         const sceneConfig = {
@@ -25,11 +14,13 @@ export default class HelloWorldScene extends Phaser.Scene {
     preload() {
         this.load.image('tile', '../images/Sidewalk_Chunk_trimmed.png')
         this.load.image('cube', '../images/cube.png')
+        this.load.image('crate', '../images/isoCrate.png')
         this.load.image('d-cube', '../images/isoCube.png')
     }
 
     create() {
         var cam = this.cameras.main
+
         this.input.on('pointermove', function (p) {
             if (!p.isDown) return
 
@@ -49,60 +40,49 @@ export default class HelloWorldScene extends Phaser.Scene {
                 }
             }
         }
+        
         this.createIsometricTile(1, 2, 2) */
+        const player = new Tile({
+            scene: this.scene.scene,
+            isoX: 2,
+            isoY: 2,
+            isoZ: 1,
+            imageName: 'd-cube',
+        })
+        player.image.setTint(0xbf96da)
         for (let x = 0; x < 10; x++) {
             for (let y = 0; y < 10; y++) {
-                for (let z = 0; z < 2; z++) {
+                for (let z = 0; z < 10; z++) {
                     const tile = new Tile({
                         scene: this.scene.scene,
                         isoX: x,
                         isoY: y,
                         isoZ: z,
+                        imageName: 'd-cube',
                     })
+
                     tile.image.setInteractive()
-                    tile.image.on('pointerdown', (a, b, c) => {
-                        tile.z += 0.1
-                        tile.image.setTint(0xbf96da)
-                        this.tweens.add({
-                            targets: tile,
-                            x: 20,
-                            y: 20,
-                            duration: 2000,
-                            ease: 'Power2',
-                        })
+                    tile.image.on('pointerdown', async (pointer, x, y) => {
+                        /*  player.image.setDepth(999999)
+                        await player.smoothChangePosition(
+                            tile.x,
+                            tile.y,
+                            player.z
+                        ) */
+                        //player.image.setDepth(player.depth)
+                        console.log('tile', tile.x, tile.y, tile.z)
                     })
+                    setInterval(async () => {
+                        tile.rotate()
+                        player.rotate()
+                    }, 1000)
+                    /*   setInterval(() => {
+                        tile.rotate()
+                        player.rotate()
+                    }, 6000) */
                 }
             }
         }
     }
     update(time: number, delta: number): void {}
-
-    createIsometricTile(x, y, z) {
-        const tilePositionX = (x - y) * (TILE_WIDTH * 0.5)
-        const tilePositionY = getTileY(x, y, z)
-        const tileDepth = getTileDepth(x, y, z)
-
-        const tile = this.add.image(tilePositionX, tilePositionY, 'd-cube')
-        tile.setInteractive()
-        tile.on('pointerover', function () {
-            this.setTint(0xbf96da)
-            this.z = this.z + 0.5
-            this.y = getTileY(x, y, this.z)
-        })
-
-        tile.on('pointerout', function () {
-            this.clearTint()
-            this.z = this.z - 0.5
-            this.y = getTileY(x, y, this.z)
-        })
-        /*  tile.on('pointerdown', function () {
-            console.log('this', this)
-            this.z = this.z + 1
-            this.y = this.y - this.z
-            //this.setDepth(getTileDepth(this.x, this.y, this.z))
-        }) */
-
-        tile.setOrigin(0.5, TILE_ORIGIN)
-        tile.setDepth(tileDepth)
-    }
 }
