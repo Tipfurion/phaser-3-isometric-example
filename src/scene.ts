@@ -52,34 +52,5 @@ export default class Scene extends Phaser.Scene {
                 }
             }
         }
-
-        for (let x = 20; x < 30; x++) {
-            for (let y = 0; y < 10; y++) {
-                for (let z = 0; z < 2; z++) {
-                    const tile = new Tile({
-                        scene: this.scene.scene,
-                        isoX: x,
-                        isoY: y,
-                        isoZ: z,
-                        imageName: 'cube',
-                    })
-                    if (x === 4 && y === 4 && z === 0) {
-                        const { x: centerX, y: centerY } = tile.getWorldCoords()
-                        cam.centerOn(centerX, centerY)
-                    }
-                    this.tiles.push(tile)
-                    tile.image.setInteractive()
-                    tile.image.on('pointerover', async () => {
-                        tile.image.setTint(0xbd85ed)
-                    })
-                    tile.image.on('pointerout', async () => {
-                        tile.image.clearTint()
-                    })
-                    tile.image.on('pointerdown', async () => {
-                        tile.z++
-                    })
-                }
-            }
-        }
     }
 }
