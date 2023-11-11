@@ -20,7 +20,7 @@ export default class Scene extends Phaser.Scene {
             cam.scrollX -= (p.x - p.prevPosition.x) / cam.zoom
             cam.scrollY -= (p.y - p.prevPosition.y) / cam.zoom
         })
-        this.input.on('wheel', (pointer, gameObjects, deltaX, deltaY, deltaZ) => {
+        this.input.on('wheel', (_pointer, _gameObjects, _deltaX, deltaY, _deltaZ) => {
             cam.zoom = cam.zoom - deltaY * 0.0003
         })
 
